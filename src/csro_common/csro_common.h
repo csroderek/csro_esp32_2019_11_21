@@ -21,6 +21,7 @@
 #include "time.h"
 #include "cJSON.h"
 
+#define CLOUD_SERV
 #define AIR_SYS
 
 typedef struct

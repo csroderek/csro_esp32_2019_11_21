@@ -1,6 +1,6 @@
 #include "mb_config.h"
 
-modbus_master master_ap;
+modbus_master master_ac;
 ac_param ac_ctrl;
 
 static bool master_ac_send_receive(uint16_t timeout)
