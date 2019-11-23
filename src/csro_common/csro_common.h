@@ -1,12 +1,27 @@
 #ifndef CSRO_COMMON_H_
 #define CSRO_COMMON_H_
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
+
 #include "esp_system.h"
+#include "esp_wifi.h"
+#include "esp_smartconfig.h"
+#include "esp_event.h"
+#include "esp_event_loop.h"
+
+#include "driver/gpio.h"
+#include "driver/uart.h"
+#include "lwip/apps/sntp.h"
+#include "lwip/sockets.h"
 #include "nvs_flash.h"
 #include "mqtt_client.h"
 
 #include "time.h"
 #include "cJSON.h"
+
+#define AIR_SYS
 
 typedef struct
 {
@@ -53,5 +68,18 @@ typedef struct
 
     uint16_t interval;
 } csro_mqtt;
+
+extern csro_system sysinfo;
+extern csro_mqtt mqttinfo;
+extern esp_mqtt_client_handle_t mqttclient;
+
+//common.c
+void csro_mqtt_client_info(void);
+
+//csro_start_config.c
+void csro_start_smart_config(void);
+
+//csro_mqtt.c
+void csro_start_mqtt(void);
 
 #endif
