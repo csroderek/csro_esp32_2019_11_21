@@ -27,6 +27,13 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 
 static void udp_receive_mqtt_server(void)
 {
+
+#ifdef CLOUD_SERV
+
+    static char udp_buffer[256] = "{\"server\":\"csro.net.cn\"}";
+
+#else
+
     static char udp_buffer[256];
     int udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
     if (udp_sock < 0)
@@ -51,6 +58,9 @@ static void udp_receive_mqtt_server(void)
     {
         return;
     }
+
+#endif
+
     cJSON *json = cJSON_Parse(udp_buffer);
     cJSON *server;
     if (json != NULL)
@@ -92,7 +102,7 @@ static void udp_server_task(void *args)
     while (true)
     {
         udp_receive_mqtt_server();
-        vTaskDelay(6000 / portTICK_RATE_MS);
+        vTaskDelay(60000 / portTICK_RATE_MS);
     }
     vTaskDelete(NULL);
 }
