@@ -1,7 +1,7 @@
 #ifndef __MB_CONFIG_H
 #define __MB_CONFIG_H
 
-#include "csro_common/csro_common.h"
+#include "mb_address.h"
 
 //uart pin
 #define TXD0_PIN (GPIO_NUM_15)
@@ -43,7 +43,7 @@ typedef struct
     int16_t ac_power;
     int16_t ac_mode;
     int16_t ac_temp;
-} csro_ac_control;
+} ac_param;
 
 typedef struct
 {
@@ -51,7 +51,7 @@ typedef struct
     int16_t ap_mode;
     int16_t ap_fan;
     int16_t ap_temp;
-} csro_ap_control;
+} ap_param;
 
 typedef struct
 {

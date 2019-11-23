@@ -35,21 +35,21 @@ static void slave_read_discs(modbus_slave *slave)
         slave->byte_count = (slave->read_qty % 8 == 0) ? (slave->read_qty / 8) : (slave->read_qty / 8 + 1);
         slave->tx_buf[slave->tx_len++] = slave->rx_buf[1];
         slave->tx_buf[slave->tx_len++] = slave->byte_count;
-        for (slave->i = 0; slave->i < slave->byte_count * 8; slave->i++)
+        for (uint16_t i = 0; i < slave->byte_count * 8; i++)
         {
-            if (slave->i % 8 == 0)
+            if (i % 8 == 0)
             {
                 slave->data = 0x00;
             }
-            if (slave->i < slave->read_qty)
+            if (i < slave->read_qty)
             {
-                slave->data = (slave->regs->discs[slave->read_addr + slave->i] == 1) ? (slave->data >> 1 | 0x80) : (slave->data >> 1 & 0x7F);
+                slave->data = (slave->regs->discs[slave->read_addr + i] == 1) ? (slave->data >> 1 | 0x80) : (slave->data >> 1 & 0x7F);
             }
             else
             {
                 slave->data = slave->data >> 1 & 0x7F;
             }
-            if ((slave->i + 1) % 8 == 0)
+            if ((i + 1) % 8 == 0)
             {
                 slave->tx_buf[slave->tx_len++] = slave->data;
             }
@@ -73,21 +73,21 @@ static void slave_read_coils(modbus_slave *slave)
         slave->byte_count = (slave->read_qty % 8 == 0) ? (slave->read_qty / 8) : (slave->read_qty / 8 + 1);
         slave->tx_buf[slave->tx_len++] = slave->rx_buf[1];
         slave->tx_buf[slave->tx_len++] = slave->byte_count;
-        for (slave->i = 0; slave->i < slave->byte_count * 8; slave->i++)
+        for (uint16_t i = 0; i < slave->byte_count * 8; i++)
         {
-            if (slave->i % 8 == 0)
+            if (i % 8 == 0)
             {
                 slave->data = 0x00;
             }
-            if (slave->i < slave->read_qty)
+            if (i < slave->read_qty)
             {
-                slave->data = (slave->regs->coils[slave->read_addr + slave->i] == 1) ? ((slave->data >> 1) | 0x80) : ((slave->data >> 1) & 0x7F);
+                slave->data = (slave->regs->coils[slave->read_addr + i] == 1) ? ((slave->data >> 1) | 0x80) : ((slave->data >> 1) & 0x7F);
             }
             else
             {
                 slave->data = (slave->data / 2) & 0x7F;
             }
-            if ((slave->i + 1) % 8 == 0)
+            if ((i + 1) % 8 == 0)
             {
                 slave->tx_buf[slave->tx_len++] = slave->data;
             }
@@ -110,10 +110,10 @@ static void slave_read_input_regs(modbus_slave *slave)
     {
         slave->tx_buf[slave->tx_len++] = slave->rx_buf[1];
         slave->tx_buf[slave->tx_len++] = slave->read_qty * 2;
-        for (slave->i = 0; slave->i < slave->read_qty; slave->i++)
+        for (uint16_t i = 0; i < slave->read_qty; i++)
         {
-            slave->tx_buf[slave->tx_len++] = slave->regs->inputs[slave->i + slave->read_addr] >> 8;
-            slave->tx_buf[slave->tx_len++] = slave->regs->inputs[slave->i + slave->read_addr] & 0xFF;
+            slave->tx_buf[slave->tx_len++] = slave->regs->inputs[i + slave->read_addr] >> 8;
+            slave->tx_buf[slave->tx_len++] = slave->regs->inputs[i + slave->read_addr] & 0xFF;
         }
     }
 }
@@ -133,10 +133,10 @@ static void slave_read_holding_regs(modbus_slave *slave)
     {
         slave->tx_buf[slave->tx_len++] = slave->rx_buf[1];
         slave->tx_buf[slave->tx_len++] = slave->read_qty * 2;
-        for (slave->i = 0; slave->i < slave->read_qty; slave->i++)
+        for (uint16_t i = 0; i < slave->read_qty; i++)
         {
-            slave->tx_buf[slave->tx_len++] = slave->regs->holdings[slave->i + slave->read_addr] >> 8;
-            slave->tx_buf[slave->tx_len++] = slave->regs->holdings[slave->i + slave->read_addr] & 0xFF;
+            slave->tx_buf[slave->tx_len++] = slave->regs->holdings[i + slave->read_addr] >> 8;
+            slave->tx_buf[slave->tx_len++] = slave->regs->holdings[i + slave->read_addr] & 0xFF;
         }
     }
 }
