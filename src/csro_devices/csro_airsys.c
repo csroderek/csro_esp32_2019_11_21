@@ -74,7 +74,7 @@ void csro_airsys_on_connect(esp_mqtt_event_handle_t event)
 
     char prefix[50], name[50];
     char *work_mode[4] = {"cool", "heat", "dry", "fan_only"};
-    char *fan_mode[5] = {"auto", "low", "medhium", "high", "super"};
+    char *fan_mode[5] = {"自动", "静音", "低风", "中风", "高风"};
     sprintf(mqttinfo.pub_topic, "csro/climate/%s_%s/config", sysinfo.mac_str, sysinfo.dev_type);
     sprintf(prefix, "csro/%s/%s", sysinfo.mac_str, sysinfo.dev_type);
     sprintf(name, "%s_%s", sysinfo.dev_type, sysinfo.mac_str);
