@@ -44,9 +44,9 @@ void csro_airsys_init(void)
 {
     uart_handler.receive_one_byte = uart_receive_one_byte;
     uart_handler.receive_complete = uart_receive_complete;
-    csro_master_ac_init(UART_NUM_0);
-    csro_master_ap_init(UART_NUM_1);
-    csro_slave_hmi_init(UART_NUM_2);
+    // csro_master_ac_init(UART_NUM_0);
+    // csro_master_ap_init(UART_NUM_1);
+    // csro_slave_hmi_init(UART_NUM_2);
 }
 
 void csro_update_airsys_state(void)

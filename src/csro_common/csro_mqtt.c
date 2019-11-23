@@ -1,4 +1,5 @@
 #include "csro_common.h"
+#include "csro_devices/csro_devices.h"
 
 static void time_stamp_task(void *args)
 {
@@ -15,11 +16,11 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
     if (event->event_id == MQTT_EVENT_CONNECTED)
     {
-        //csro_device_on_connect(event);
+        csro_device_on_connect(event);
     }
     else if (event->event_id == MQTT_EVENT_DATA)
     {
-        //csro_device_on_message(event);
+        csro_device_on_message(event);
     }
     return ESP_OK;
 }
