@@ -22,7 +22,12 @@
 #include "cJSON.h"
 
 #define CLOUD_SERV
+
+#define NLIGHT_TOUCH_3K3R
+/* 
 #define AIR_SYS
+#define NLIGHT_TOUCH_3K3R
+*/
 
 typedef struct
 {

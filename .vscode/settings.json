@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "csro_common.h": "c"
+        "csro_common.h": "c",
+        "csro_devices.h": "c"
     }
 }

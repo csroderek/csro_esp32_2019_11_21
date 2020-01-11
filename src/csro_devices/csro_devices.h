@@ -22,4 +22,9 @@ void csro_airsys_init(void);
 void csro_airsys_on_connect(esp_mqtt_event_handle_t event);
 void csro_airsys_on_message(esp_mqtt_event_handle_t event);
 
+//csro_nlight_touch_3k3r.c
+void csro_nlight_touch_3k3r_init(void);
+void csro_nlight_touch_3k3r_on_connect(esp_mqtt_event_handle_t event);
+void csro_nlight_touch_3k3r_on_message(esp_mqtt_event_handle_t event);
+
 #endif
