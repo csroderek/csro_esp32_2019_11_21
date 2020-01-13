@@ -13,6 +13,7 @@
 
 #include "driver/gpio.h"
 #include "driver/uart.h"
+#include "driver/touch_pad.h"
 #include "lwip/apps/sntp.h"
 #include "lwip/sockets.h"
 #include "nvs_flash.h"
