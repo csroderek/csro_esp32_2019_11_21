@@ -27,4 +27,9 @@ void csro_nlight_touch_3k3r_init(void);
 void csro_nlight_touch_3k3r_on_connect(esp_mqtt_event_handle_t event);
 void csro_nlight_touch_3k3r_on_message(esp_mqtt_event_handle_t event);
 
+//csro_motor_touch_3k2r.c
+void csro_motor_touch_3k2r_init(void);
+void csro_motor_touch_3k2r_on_connect(esp_mqtt_event_handle_t event);
+void csro_motor_touch_3k2r_on_message(esp_mqtt_event_handle_t event);
+
 #endif

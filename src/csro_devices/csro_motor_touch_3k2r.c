@@ -1,6 +1,6 @@
 #include "csro_devices.h"
 
-#ifdef NLIGHT_TOUCH_3K3R
+#ifdef MOTOR_TOUCH_3K2R
 
 #define THRESHOLD 15
 
@@ -8,31 +8,38 @@
 #define TOUCH_02_NUM 2
 #define TOUCH_03_NUM 3
 
-#define RELAY_01_NUM GPIO_NUM_27
-#define RELAY_02_NUM GPIO_NUM_14
-#define RELAY_03_NUM GPIO_NUM_12
+#define RELAY_UP_NUM GPIO_NUM_27
+#define RELAY_DOWN_NUM GPIO_NUM_14
 
 #define LED_01_NUM GPIO_NUM_19
 #define LED_02_NUM GPIO_NUM_18
 #define LED_03_NUM GPIO_NUM_5
-#define GPIO_OUTPUT_PIN_SEL ((1ULL << RELAY_01_NUM) | (1ULL << RELAY_02_NUM) | (1ULL << RELAY_03_NUM) | (1ULL << LED_01_NUM) | (1ULL << LED_02_NUM) | (1ULL << LED_03_NUM))
+#define GPIO_OUTPUT_PIN_SEL ((1ULL << RELAY_UP_NUM) | (1ULL << RELAY_DOWN_NUM) | (1ULL << LED_01_NUM) | (1ULL << LED_02_NUM) | (1ULL << LED_03_NUM))
 
-int light_state[3] = {0, 0, 0};
+typedef enum
+{
+    STOP = 0,
+    UP = 1,
+    DOWN = 2,
+} motor_state;
 
-static void csro_update_nlight_touch_3k3r_state(void)
+motor_state motor = STOP;
+int action = UP;
+
+static void csro_update_motor_touch_3k2r_state(void)
 {
 }
 
-static void nlight_touch_3k3r_relay_led_task(void *args)
+static void motor_touch_3k2r_relay_led_task(void *args)
 {
     while (true)
     {
-        printf("%d %d %d\r\n", light_state[0], light_state[1], light_state[2]);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        printf("%d \r\n", motor);
+        vTaskDelay(20 / portTICK_PERIOD_MS);
     }
 }
 
-static void nlight_touch_3k3r_key_task(void *args)
+static void motor_touch_3k2r_key_task(void *args)
 {
 
     static uint16_t first_touch_value[4];
@@ -60,15 +67,17 @@ static void nlight_touch_3k3r_key_task(void *args)
                 {
                     if (i == 0)
                     {
-                        light_state[0] = !light_state[0];
+                        motor_state state = motor;
+                        motor = (state == STOP) ? UP : STOP;
                     }
                     else if (i == 2)
                     {
-                        light_state[1] = !light_state[1];
+                        motor = STOP;
                     }
                     else if (i == 3)
                     {
-                        light_state[2] = !light_state[2];
+                        motor_state state = motor;
+                        motor = (state == STOP) ? DOWN : STOP;
                     }
                 }
             }
@@ -86,17 +95,17 @@ static void nlight_touch_3k3r_key_task(void *args)
     vTaskDelete(NULL);
 }
 
-void csro_nlight_touch_3k3r_init(void)
+void csro_motor_touch_3k2r_init(void)
 {
-    xTaskCreate(nlight_touch_3k3r_relay_led_task, "nlight_touch_3k3r_relay_led_task", 2048, NULL, configMAX_PRIORITIES - 8, NULL);
-    xTaskCreate(nlight_touch_3k3r_key_task, "nlight_touch_3k3r_key_task", 2048, NULL, configMAX_PRIORITIES - 6, NULL);
+    xTaskCreate(motor_touch_3k2r_relay_led_task, "motor_touch_3k2r_relay_led_task", 2048, NULL, configMAX_PRIORITIES - 8, NULL);
+    xTaskCreate(motor_touch_3k2r_key_task, "motor_touch_3k2r_key_task", 2048, NULL, configMAX_PRIORITIES - 6, NULL);
 }
 
-void csro_nlight_touch_3k3r_on_connect(esp_mqtt_event_handle_t event)
+void csro_motor_touch_3k2r_on_connect(esp_mqtt_event_handle_t event)
 {
 }
 
-void csro_nlight_touch_3k3r_on_message(esp_mqtt_event_handle_t event)
+void csro_motor_touch_3k2r_on_message(esp_mqtt_event_handle_t event)
 {
 }
 

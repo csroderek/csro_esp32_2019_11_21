@@ -24,10 +24,11 @@
 
 #define CLOUD_SERV
 
-#define NLIGHT_TOUCH_3K3R
+#define MOTOR_TOUCH_3K2R
 /* 
 #define AIR_SYS
 #define NLIGHT_TOUCH_3K3R
+#define MOTOR_TOUCH_3K2R
 */
 
 typedef struct
