@@ -32,11 +32,43 @@ static void csro_update_motor_touch_3k2r_state(void)
 
 static void motor_touch_3k2r_relay_led_task(void *args)
 {
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_PIN_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
+
     while (true)
     {
-        printf("%d \r\n", motor);
-        vTaskDelay(20 / portTICK_PERIOD_MS);
+        if (motor == UP)
+        {
+            gpio_set_level(RELAY_UP_NUM, 1);
+            gpio_set_level(RELAY_DOWN_NUM, 0);
+            gpio_set_level(LED_01_NUM, 0);
+            gpio_set_level(LED_02_NUM, 1);
+            gpio_set_level(LED_03_NUM, 1);
+        }
+        else if (motor == STOP)
+        {
+            gpio_set_level(RELAY_UP_NUM, 0);
+            gpio_set_level(RELAY_DOWN_NUM, 0);
+            gpio_set_level(LED_01_NUM, 1);
+            gpio_set_level(LED_02_NUM, 0);
+            gpio_set_level(LED_03_NUM, 1);
+        }
+        else if (motor == DOWN)
+        {
+            gpio_set_level(RELAY_UP_NUM, 0);
+            gpio_set_level(RELAY_DOWN_NUM, 1);
+            gpio_set_level(LED_01_NUM, 1);
+            gpio_set_level(LED_02_NUM, 1);
+            gpio_set_level(LED_03_NUM, 0);
+        }
+        vTaskDelay(25 / portTICK_PERIOD_MS);
     }
+    vTaskDelete(NULL);
 }
 
 static void motor_touch_3k2r_key_task(void *args)
