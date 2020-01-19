@@ -32,24 +32,6 @@ motor_state motor = STOP;
 
 static void csro_update_motor_touch_3k2r_state(void)
 {
-    if (mqttclient != NULL)
-    {
-        cJSON *state_json = cJSON_CreateObject();
-        cJSON *airsys_json;
-
-        cJSON_AddStringToObject(state_json, "time", sysinfo.time_str);
-        cJSON_AddNumberToObject(state_json, "run", (int)(sysinfo.time_now - sysinfo.time_start));
-        cJSON_AddItemToObject(state_json, "state", airsys_json = cJSON_CreateObject());
-        cJSON_AddStringToObject(airsys_json, "mode", work_mode[csro_airsys.mode]);
-        cJSON_AddNumberToObject(airsys_json, "temp", csro_airsys.temp);
-        cJSON_AddStringToObject(airsys_json, "fan", fan_mode[csro_airsys.fan]);
-        char *out = cJSON_PrintUnformatted(state_json);
-        strcpy(mqttinfo.content, out);
-        free(out);
-        cJSON_Delete(state_json);
-        sprintf(mqttinfo.pub_topic, "csro/%s/%s/state", sysinfo.mac_str, sysinfo.dev_type);
-        esp_mqtt_client_publish(mqttclient, mqttinfo.pub_topic, mqttinfo.content, 0, 0, 1);
-    }
 }
 
 static void motor_touch_3k2r_relay_led_task(void *args)
@@ -71,16 +53,46 @@ static void motor_touch_3k2r_relay_led_task(void *args)
         {
             last_state = motor;
             update = true;
-
-            if (motor == STOP)
+            if (motor == STOP || motor == STOP_TO_CLOSE || motor == STOP_TO_OPEN)
             {
                 gpio_set_level(RELAY_OPEN_NUM, 0);
                 gpio_set_level(RELAY_CLOSE_NUM, 0);
             }
             else if (motor == OPEN)
             {
+                gpio_set_level(RELAY_OPEN_NUM, 1);
+                gpio_set_level(RELAY_CLOSE_NUM, 0);
+            }
+            else if (motor == CLOSE)
+            {
+                gpio_set_level(RELAY_OPEN_NUM, 0);
+                gpio_set_level(RELAY_CLOSE_NUM, 1);
             }
         }
+        if (motor != STOP)
+        {
+            count_100ms++;
+            if (count_100ms == 5 && motor == STOP_TO_CLOSE)
+            {
+                motor = CLOSE;
+                count_100ms = 0;
+            }
+            else if (count_100ms == 5 && motor == STOP_TO_OPEN)
+            {
+                motor = OPEN;
+                count_100ms = 0;
+            }
+            else if (count_100ms == 600 && (motor == OPEN || motor == CLOSE))
+            {
+                motor = STOP;
+                count_100ms = 0;
+            }
+        }
+        else
+        {
+            count_100ms = 0;
+        }
+
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
