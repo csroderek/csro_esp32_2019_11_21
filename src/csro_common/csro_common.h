@@ -23,6 +23,7 @@
 #include "cJSON.h"
 
 #define CLOUD_SERV
+#define ASSIGNED_ROUTER
 
 #define MOTOR_TOUCH_3K2R
 /* 
