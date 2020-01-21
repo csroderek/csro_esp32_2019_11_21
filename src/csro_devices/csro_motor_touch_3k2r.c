@@ -246,6 +246,7 @@ void csro_motor_touch_3k2r_on_connect(esp_mqtt_event_handle_t event)
     sprintf(name, "%s_%s", sysinfo.dev_type, sysinfo.mac_str);
 
     cJSON *config_json = cJSON_CreateObject();
+    cJSON *device = cJSON_CreateObject();
     cJSON_AddStringToObject(config_json, "~", prefix);
     cJSON_AddStringToObject(config_json, "name", name);
     cJSON_AddStringToObject(config_json, "unique_id", name);
@@ -256,12 +257,15 @@ void csro_motor_touch_3k2r_on_connect(esp_mqtt_event_handle_t event)
     cJSON_AddStringToObject(config_json, "pl_open", "up");
     cJSON_AddStringToObject(config_json, "pl_stop", "stop");
     cJSON_AddStringToObject(config_json, "pl_cls", "down");
-    cJSON_AddNumberToObject(config_json, "state_open", 1);
-    cJSON_AddNumberToObject(config_json, "state_closed", 0);
-    cJSON_AddStringToObject(config_json, "pl_avail", "online");
-    cJSON_AddStringToObject(config_json, "pl_not_avail", "offline");
     cJSON_AddStringToObject(config_json, "value_template", "{{value_json.state}}");
     cJSON_AddStringToObject(config_json, "opt", "false");
+
+    cJSON_AddItemToObject(config_json, "dev", device);
+    cJSON_AddStringToObject(device, "ids", sysinfo.mac_str);
+    cJSON_AddStringToObject(device, "name", sysinfo.mac_str);
+    cJSON_AddStringToObject(device, "mf", "CSRO");
+    cJSON_AddStringToObject(device, "mdl", "GT-M1");
+    cJSON_AddStringToObject(device, "sw", "1.0");
 
     char *out = cJSON_PrintUnformatted(config_json);
     strcpy(mqttinfo.content, out);
@@ -276,6 +280,37 @@ void csro_motor_touch_3k2r_on_connect(esp_mqtt_event_handle_t event)
 
 void csro_motor_touch_3k2r_on_message(esp_mqtt_event_handle_t event)
 {
+    char topic[50];
+    sprintf(topic, "csro/%s/%s/set", sysinfo.mac_str, sysinfo.dev_type);
+    if (strncmp(topic, event->topic, event->topic_len) == 0)
+    {
+        if (strncmp("up", event->data, event->data_len) == 0)
+        {
+            if (motor == STOP || motor == STOP_TO_CLOSE)
+            {
+                motor = OPEN;
+            }
+            else if (motor == CLOSE)
+            {
+                motor = STOP_TO_OPEN;
+            }
+        }
+        else if (strncmp("stop", event->data, event->data_len) == 0)
+        {
+            motor = STOP;
+        }
+        else if (strncmp("down", event->data, event->data_len) == 0)
+        {
+            if (motor == STOP || motor == STOP_TO_OPEN)
+            {
+                motor = CLOSE;
+            }
+            else if (motor == OPEN)
+            {
+                motor = STOP_TO_CLOSE;
+            }
+        }
+    }
 }
 
 #endif
